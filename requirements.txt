@@ -5,4 +5,5 @@ yfinance
 scikit-learn
 joblib
 pytest
+flake8
 
