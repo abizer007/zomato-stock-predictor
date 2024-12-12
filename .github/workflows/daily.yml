@@ -54,9 +54,7 @@ jobs:
                      from datetime import datetime; 
                      pred_file.write(f'Weekly predictions on {datetime.now()}:\n{weekly_predictions}\n');"
 
-    "
-
-      
+        
     - name: Commit changes
       run: |
         git config --global user.name "abizer007"
