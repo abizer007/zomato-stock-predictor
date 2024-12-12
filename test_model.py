@@ -38,20 +38,36 @@ def test_build_lstm_model():
     assert len(model.layers) > 0
 
 # Test if weekly predictions file is being written correctly
+import numpy as np
+from datetime import datetime
+
 def test_weekly_predictions():
+    # Fetch data, add indicators, and prepare for prediction
     data = fetch_data(ticker="ZOMATO.NS")
     data = add_technical_indicators(data)
     X, y, scaler = prepare_data(data)
+    
+    # Build and train the model
     model = build_lstm_model(X)
     model.fit(X, y, epochs=1, batch_size=32)
-    y_pred = model.predict(X[-7:])
-    weekly_predictions = scaler.inverse_transform(y_pred)
     
+    # Make predictions for the last 7 data points
+    y_pred = model.predict(X[-7:])
+    
+    # Reshape y_pred to match the scaler's expected shape (4 features)
+    y_pred_reshaped = np.hstack([y_pred, np.zeros((y_pred.shape[0], 3))])  # Adding dummy columns
+    
+    # Inverse transform the predictions
+    weekly_predictions = scaler.inverse_transform(y_pred_reshaped)
+    
+    # Save predictions to a file
     with open("weekly_predictions.txt", "a") as pred_file:
         pred_file.write(f"Weekly predictions on {datetime.now()}:\n{weekly_predictions}\n")
     
+    # Verify content of the file
     with open("weekly_predictions.txt", "r") as pred_file:
         content = pred_file.read()
         assert "Weekly predictions on" in content
         assert len(content.split("\n")) > 1
+
 
