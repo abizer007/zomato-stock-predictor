@@ -13,11 +13,17 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up Python
+    - name: Setup Python
       uses: actions/setup-python@v5.3.0
       with:
-        python-version: 3.10  # Use Python 3.10 for TensorFlow compatibility
+        python-version: 3.10  # Specify Python version 3.10 for compatibility with TensorFlow
+        architecture: x64  # Use 64-bit architecture (default)
+        check-latest: true  # Ensure it checks for the latest compatible version
+        cache: pip  # Use pip for dependency caching
+        cache-dependency-path: 'requirements.txt'  # Path to dependencies for caching
+        update-environment: true  # Update environment variables
 
+          
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
