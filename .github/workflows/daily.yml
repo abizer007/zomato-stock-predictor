@@ -1,10 +1,10 @@
-name: Zomato Stock Predictor Automation
+name: Python application
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   schedule:
     - cron: "0 0 * * *"  # Runs daily at midnight UTC
   workflow_dispatch:  # Allows manual triggering
@@ -14,12 +14,11 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
@@ -41,11 +40,21 @@ jobs:
       run: |
         pip install gitpython
 
-    - name: Run daily script
+    - name: Run model functions for daily tasks
       run: |
-        python daily_run.py
-
-    - name: Commit changes (if applicable)
+        python -c "from model import fetch_data, add_technical_indicators, prepare_data, build_lstm_model; \
+                   data = fetch_data(ticker='ZOMATO.NS'); \
+                   data = add_technical_indicators(data); \
+                   X, y, scaler = prepare_data(data); \
+                   model = build_lstm_model(X); \
+                   model.fit(X, y, epochs=1, batch_size=32); \
+                   y_pred = model.predict(X[-7:]); \
+                   weekly_predictions = scaler.inverse_transform(y_pred); \
+                   with open('weekly_predictions.txt', 'a') as pred_file: \
+                     from datetime import datetime; \
+                     pred_file.write(f'Weekly predictions on {datetime.now()}:\n{weekly_predictions}\n');"
+      
+    - name: Commit changes
       run: |
         git config --global user.name "abizer007"
         git config --global user.email "abizermasavi@gmail.com"
