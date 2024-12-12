@@ -29,8 +29,8 @@ jobs:
 
     - name: Commit changes
       run: |
-        git config --global user.name "Your GitHub Username"
-        git config --global user.email "Your Email"
+        git config --global user.name "abizer007"
+        git config --global user.email "abizermasavi@gmail.com"
         git add .
-        git commit -m "Daily update: $(date)"
+        git commit -m "Daily automation: $(date +'%Y-%m-%d')"
         git push
