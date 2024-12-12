@@ -1,0 +1,36 @@
+name: Zomato Stock Predictor Automation
+
+on:
+  schedule:
+    - cron: "0 0 * * *"  # Runs daily at midnight UTC
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.10  # Adjust based on your version
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run daily automation script
+      run: |
+        python daily_run.py
+
+    - name: Commit changes
+      run: |
+        git config --global user.name "Your GitHub Username"
+        git config --global user.email "Your Email"
+        git add .
+        git commit -m "Daily update: $(date)"
+        git push
