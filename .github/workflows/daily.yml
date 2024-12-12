@@ -1,4 +1,4 @@
-name: zomato-stock-prediction
+name: Zomato Stock Predictor Automation
 
 on:
   push:
