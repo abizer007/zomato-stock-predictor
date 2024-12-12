@@ -42,17 +42,21 @@ jobs:
 
     - name: Run model functions for daily tasks
       run: |
-        python -c "from model import fetch_data, add_technical_indicators, prepare_data, build_lstm_model; \
-                   data = fetch_data(ticker='ZOMATO.NS'); \
-                   data = add_technical_indicators(data); \
-                   X, y, scaler = prepare_data(data); \
-                   model = build_lstm_model(X); \
-                   model.fit(X, y, epochs=1, batch_size=32); \
-                   y_pred = model.predict(X[-7:]); \
-                   weekly_predictions = scaler.inverse_transform(y_pred); \
-                   with open('weekly_predictions.txt', 'a') as pred_file: \
-                     from datetime import datetime; \
-                     pred_file.write(f'Weekly predictions on {datetime.now()}:\n{weekly_predictions}\n');"
+          python -c "
+          from model import fetch_data, add_technical_indicators, prepare_data, build_lstm_model
+          from datetime import datetime
+          data = fetch_data(ticker='ZOMATO.NS')
+          data = add_technical_indicators(data)
+          X, y, scaler = prepare_data(data)
+          model = build_lstm_model(X)
+          model.fit(X, y, epochs=1, batch_size=32)
+          y_pred = model.predict(X[-7:])
+          weekly_predictions = scaler.inverse_transform(y_pred)
+
+with open('weekly_predictions.txt', 'a') as pred_file:
+    pred_file.write(f'Weekly predictions on {datetime.now()}:\n{weekly_predictions}\n')
+    "
+
       
     - name: Commit changes
       run: |
