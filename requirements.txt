@@ -6,4 +6,5 @@ scikit-learn
 joblib
 pytest
 flake8
+gitpython
 
