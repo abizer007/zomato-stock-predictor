@@ -1,6 +1,5 @@
 from model import fetch_data, add_technical_indicators, prepare_data, build_lstm_model
 from datetime import datetime
-import numpy as np
 
 # Fetch and preprocess data
 data = fetch_data(ticker="ZOMATO.NS")
@@ -13,10 +12,9 @@ model.fit(X, y, epochs=1, batch_size=32)
 
 # Generate predictions
 y_pred = model.predict(X[-7:])
-y_pred = y_pred.reshape(-1, 4)  # Reshaping to match the scaler's expected input
 
 # Inverse transformation to get the actual predicted values
-weekly_predictions = scaler.inverse_transform(y_pred)
+weekly_predictions = scaler.inverse_transform(y_pred)  # No need to reshape y_pred if it's already of correct shape
 
 # Save predictions to a file
 with open("weekly_predictions.txt", "a") as pred_file:
