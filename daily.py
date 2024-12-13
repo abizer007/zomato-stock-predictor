@@ -37,23 +37,25 @@ def aggregate_predictions(predictions, time_period):
     """
     Aggregates the predictions into a specified time period (e.g., monthly or yearly).
     """
+    # Convert predictions into a DataFrame, with each row as a daily prediction
+    df_pred = pd.DataFrame(predictions, columns=[f"Prediction_{i+1}" for i in range(predictions.shape[1])])
+    
+    # Add the date for each prediction (using a range of dates for the last 7 days)
+    dates = pd.date_range(end=datetime.today(), periods=len(predictions), freq='D')
+    df_pred['Date'] = dates
+    df_pred.set_index('Date', inplace=True)
+    
+    # Aggregate by resampling based on the requested time period
     if time_period == 'monthly':
-        # Aggregate predictions by month (assuming daily data)
-        df_pred = pd.DataFrame(predictions, columns=["Prediction"])
-        df_pred['Date'] = pd.to_datetime([datetime.now()] * len(df_pred))  # Example, replace with actual dates
-        df_pred.set_index('Date', inplace=True)
-        monthly_predictions = df_pred.resample('M').sum()  # Summing the daily predictions to get monthly predictions
-        return monthly_predictions
-
+        aggregated_predictions = df_pred.resample('M').sum()  # Summing the daily predictions to get monthly predictions
     elif time_period == 'yearly':
-        # Aggregate predictions by year (assuming daily data)
-        df_pred = pd.DataFrame(predictions, columns=["Prediction"])
-        df_pred['Date'] = pd.to_datetime([datetime.now()] * len(df_pred))  # Example, replace with actual dates
-        df_pred.set_index('Date', inplace=True)
-        yearly_predictions = df_pred.resample('Y').sum()  # Summing the daily predictions to get yearly predictions
-        return yearly_predictions
+        aggregated_predictions = df_pred.resample('Y').sum()  # Summing the daily predictions to get yearly predictions
+    else:
+        raise ValueError("Invalid time period. Please use 'monthly' or 'yearly'.")
+    
+    return aggregated_predictions
 
-# Example: Aggregate predictions for monthly and yearly predictions
+# Aggregate predictions for monthly and yearly predictions
 monthly_predictions = aggregate_predictions(weekly_predictions, 'monthly')
 yearly_predictions = aggregate_predictions(weekly_predictions, 'yearly')
 
@@ -81,11 +83,11 @@ try:
 except Exception as e:
     print(f"Error writing to performance.txt: {e}")
 
-# Same for other files
+# Same for other files like stock_data.csv
 try:
     with open("stock_data.csv", mode="a", newline="") as file:
         writer = csv.writer(file)
-        writer.writerow([datetime.now().strftime("%Y-%m-%d"), "1000", "Prediction Value"])
+        writer.writerow([datetime.now().strftime("%Y-%m-%d"), "1000", "Prediction Value"])  # Adjusted as an example
     print("stock_data.csv updated successfully.")
 except Exception as e:
     print(f"Error writing to stock_data.csv: {e}")
