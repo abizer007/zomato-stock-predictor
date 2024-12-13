@@ -10,14 +10,15 @@ on:
   workflow_dispatch:  # Allows manual triggering
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
@@ -27,38 +28,16 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-        pip install flake8 gitpython
 
-    - name: Test with pytest
+    - name: Run daily script
       run: |
-        pytest
+        python daily.py
 
-    - name: Run daily task
-      run: |
-        python -c "
-import sys
-from datetime import datetime
-from model import fetch_data, add_technical_indicators, prepare_data, build_lstm_model
-
-try:
-    data = fetch_data(ticker='ZOMATO.NS')
-    data = add_technical_indicators(data)
-    X, y, scaler = prepare_data(data)
-    model = build_lstm_model(X)
-    model.fit(X, y, epochs=1, batch_size=32)
-    y_pred = model.predict(X[-7:])
-    weekly_predictions = scaler.inverse_transform(y_pred)
-    with open('weekly_predictions.txt', 'a') as pred_file:
-        pred_file.write(f'Weekly predictions on {datetime.now()}:\n{weekly_predictions}\n')
-except Exception as e:
-    print(f'Error: {e}')
-    sys.exit(1)
-        "
-
-    - name: Commit changes
+    - name: Commit predictions
       run: |
         git config --global user.name "abizer007"
         git config --global user.email "abizermasavi@gmail.com"
         git add weekly_predictions.txt
         git commit -m "Daily automation: $(date +'%Y-%m-%d')"
         git push
+
