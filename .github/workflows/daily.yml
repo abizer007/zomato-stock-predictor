@@ -27,23 +27,23 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-
+        
     - name: Install flake8
       run: |
         pip install flake8
-
+        
     - name: Test with pytest
       run: |
         pytest
-
+        
     - name: Install gitpython
       run: |
         pip install gitpython
-
+        
     - name: Run model functions for daily tasks
       run: |
         python daily.py
-
+        
     - name: Commit changes
       run: |
         git config --global user.name "abizer007"
