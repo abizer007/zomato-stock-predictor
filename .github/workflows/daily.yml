@@ -17,8 +17,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
@@ -29,15 +28,27 @@ jobs:
       run: |
         pip install -r requirements.txt
 
-    - name: Run daily script
+    - name: Install flake8
+      run: |
+        pip install flake8
+
+    - name: Test with pytest
+      run: |
+        pytest
+
+    - name: Install gitpython
+      run: |
+        pip install gitpython
+
+    - name: Run model functions for daily tasks
       run: |
         python daily.py
 
-    - name: Commit predictions
+    - name: Commit changes
       run: |
         git config --global user.name "abizer007"
         git config --global user.email "abizermasavi@gmail.com"
-        git add weekly_predictions.txt
+        git remote set-url origin https://github-actions:${{ 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 }}@github.com/abizer007/zomato-stock-predictor.git
+        git add .
         git commit -m "Daily automation: $(date +'%Y-%m-%d')"
         git push
-
