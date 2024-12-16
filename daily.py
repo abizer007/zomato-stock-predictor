@@ -1,4 +1,4 @@
-mport os
+import os
 from model import fetch_data, add_technical_indicators, prepare_data, build_lstm_model
 from datetime import datetime
 import numpy as np
