@@ -13,3 +13,4 @@ hyperopt
 mlflow
 matplotlib
 seaborn
+TA-Lib
