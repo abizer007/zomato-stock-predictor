@@ -1,77 +1,67 @@
 import yfinance as yf
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error, mean_absolute_error
-import matplotlib.pyplot as plt
 import talib
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import mean_squared_error
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+import joblib
 
-# Function to fetch stock data
-def fetch_stock_data(ticker, start_date, end_date):
-    stock_data = yf.download(ticker, start=start_date, end=end_date)
-    return stock_data
+# Fetching the stock data
+def fetch_data(ticker):
+    data = yf.download(ticker, start='2015-01-01', end='2022-12-31')
+    return data
 
-# Feature engineering: Add technical indicators
+# Adding technical indicators
 def add_technical_indicators(df):
-    df['SMA'] = df['Close'].rolling(window=14).mean()  # Simple Moving Average
-    df['EMA'] = df['Close'].ewm(span=14, adjust=False).mean()  # Exponential Moving Average
-    df['RSI'] = talib.RSI(df['Close'], timeperiod=14)  # Relative Strength Index
-    df['MACD'], df['MACD_signal'], _ = talib.MACD(df['Close'], fastperiod=12, slowperiod=26, signalperiod=9)  # MACD
-    df['ATR'] = talib.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)  # Average True Range
-    df = df.dropna()  # Drop rows with NaN values
+    df['SMA'] = talib.SMA(df['Close'], timeperiod=30)
+    df['EMA'] = talib.EMA(df['Close'], timeperiod=30)
+    df['RSI'] = talib.RSI(df['Close'], timeperiod=14)
     return df
 
-# Prepare features and target variable
+# Data preparation
 def prepare_data(df):
-    X = df[['SMA', 'EMA', 'RSI', 'MACD', 'ATR']]  # Features
-    y = df['Close']  # Target: Closing price
-    return X, y
+    df = df.dropna()
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    scaled_data = scaler.fit_transform(df[['Close']].values)
+    X, y = [], []
+    for i in range(60, len(scaled_data)):
+        X.append(scaled_data[i-60:i, 0])
+        y.append(scaled_data[i, 0])
+    X, y = np.array(X), np.array(y)
+    X = np.reshape(X, (X.shape[0], X.shape[1], 1))
+    return X, y, scaler
 
-# Train model with hyperparameter optimization (GridSearchCV)
-def train_model(X, y):
-    model = RandomForestRegressor(random_state=42)
-    
-    # Hyperparameter tuning with GridSearchCV
-    param_grid = {
-        'n_estimators': [100, 200, 300],
-        'max_depth': [10, 20, 30],
-        'min_samples_split': [2, 5, 10],
-        'min_samples_leaf': [1, 2, 4],
-    }
-    
-    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=3, n_jobs=-1, verbose=2)
-    grid_search.fit(X, y)
-    
-    # Best model
-    best_model = grid_search.best_estimator_
-    
-    # Cross-validation scores
-    cv_scores = cross_val_score(best_model, X, y, cv=3)
-    print(f"Cross-validation scores: {cv_scores}")
-    
-    return best_model
+# Building the LSTM model
+def build_lstm_model(X_train):
+    model = Sequential()
+    model.add(LSTM(units=50, return_sequences=True, input_shape=(X_train.shape[1], 1)))
+    model.add(LSTM(units=50, return_sequences=False))
+    model.add(Dense(units=1))
+    model.compile(optimizer='adam', loss='mean_squared_error')
+    return model
 
-# Model evaluation
-def evaluate_model(model, X, y):
-    y_pred = model.predict(X)
-    rmse = np.sqrt(mean_squared_error(y, y_pred))
-    mae = mean_absolute_error(y, y_pred)
-    print(f"RMSE: {rmse}")
-    print(f"MAE: {mae}")
-    return rmse, mae
-
-# Main function to run the model
-def run_model(ticker='ZOMATO.NS', start_date='2023-01-01', end_date='2027-12-31'):
-    stock_data = fetch_stock_data(ticker, start_date, end_date)
-    stock_data = add_technical_indicators(stock_data)
+# Training the model
+def train_model(ticker):
+    df = fetch_data(ticker)
+    df = add_technical_indicators(df)
+    X, y, scaler = prepare_data(df)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
     
-    X, y = prepare_data(stock_data)
-    model = train_model(X, y)
-    rmse, mae = evaluate_model(model, X, y)
+    model = build_lstm_model(X_train)
+    model.fit(X_train, y_train, epochs=10, batch_size=32)
+    predictions = model.predict(X_test)
     
-    return model, rmse, mae
+    mse = mean_squared_error(y_test, predictions)
+    print(f'Mean Squared Error: {mse}')
+    
+    # Save the model and scaler
+    model.save(f'{ticker}_lstm_model.h5')
+    joblib.dump(scaler, f'{ticker}_scaler.pkl')
 
-if __name__ == '__main__':
-    model, rmse, mae = run_model()
-
+# Main
+if __name__ == "__main__":
+    train_model('ZOMATO.NS')
