@@ -98,4 +98,4 @@ for file in files_to_check:
     if os.path.exists(file):
         print(f"{file} created successfully.")
     else:
-        print(f"Failed to create {file}."
+        print(f"Failed to create {file}.")
