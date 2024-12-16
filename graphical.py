@@ -5,7 +5,8 @@ import os
 
 # Read data from file
 def read_predictions(file_path):
-    data = pd.read_csv(file_path, header=None, delimiter=" ", engine='python')
+    # Use regular expression to handle multiple spaces
+    data = pd.read_csv(file_path, header=None, delimiter=r"\s+", engine='python')
     return data.values
 
 # Function to plot the data
@@ -43,3 +44,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
