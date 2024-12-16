@@ -55,6 +55,7 @@ jobs:
         git config --global user.name "abizer007"
         git config --global user.email "abizermasavi@gmail.com"
         git remote set-url origin https://github-actions:${{ secrets.ZOM_TOK }}@github.com/abizer007/zomato-stock-predictor.git
-        git add performance.txt weekly_predictions.txt monthly_predictions.txt yearly_predictions.txt stock_data.csv
+        git add performance.txt weekly_predictions.txt monthly_predictions.txt yearly_predictions.txt stock_data.csv stock_data.txt
         git commit -m "Daily automation: $(date +'%Y-%m-%d')"
         git push
+
