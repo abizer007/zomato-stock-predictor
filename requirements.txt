@@ -7,4 +7,9 @@ joblib
 pytest
 flake8
 gitpython
-
+xgboost
+optuna
+hyperopt
+mlflow
+matplotlib
+seaborn
