@@ -49,7 +49,16 @@ jobs:
       run: |
         ls -l
         git status
-        
+    - name: Run graphical.py to generate plot
+      run: |
+          python graphical.py
+
+    - name: Upload generated plot
+      uses: actions/upload-artifact@v2
+      with:
+          name: predictions_plot
+          path: logs/predictions_plot.png    
+          
     - name: Commit changes
       run: |
         git config --global user.name "abizer007"
