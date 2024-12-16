@@ -52,12 +52,17 @@ jobs:
     - name: Run graphical.py to generate plot
       run: |
           python graphical.py
+    - name: Check if plot file exists
+      run: |
+        ls -l logs/predictions_plot.png
 
     - name: Upload generated plot
       uses: actions/upload-artifact@v3
       with:
           name: predictions_plot
-          path: logs/predictions_plot.png    
+          path: logs/predictions_plot.png
+          if-no-files-found: warn
+          include-hidden-files: false
           
     - name: Commit changes
       run: |
