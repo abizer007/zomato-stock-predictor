@@ -30,3 +30,7 @@ Monthly predictions on 2024-12-16 07:18:41.756964:
             Prediction_1  Prediction_2  Prediction_3  Prediction_4
 Date                                                              
 2024-12-31   1533.466797   1402.101685   1206.016846    461.381714
+Monthly predictions on 2024-12-17 01:50:48.874165:
+            Prediction_1  Prediction_2  Prediction_3  Prediction_4
+Date                                                              
+2024-12-31   1353.530518   1251.582764    1089.91748    406.886414
