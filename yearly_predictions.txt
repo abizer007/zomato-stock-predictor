@@ -59,3 +59,7 @@ Yearly predictions on 2024-12-23 01:43:48.408092:
             Prediction_1  Prediction_2  Prediction_3  Prediction_4
 Date                                                              
 2024-12-31   1448.728638   1336.484985   1162.587524    435.718018
+Yearly predictions on 2024-12-24 01:41:51.913919:
+            Prediction_1  Prediction_2  Prediction_3  Prediction_4
+Date                                                              
+2024-12-31   1368.664917   1269.130737   1112.508423    411.470001
