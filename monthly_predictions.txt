@@ -128,3 +128,7 @@ Monthly predictions on 2025-01-08 01:42:39.884652:
             Prediction_1  Prediction_2  Prediction_3  Prediction_4
 Date                                                              
 2025-01-31   1438.968506   1328.274292   1168.235352    432.762085
+Monthly predictions on 2025-01-09 02:09:18.403924:
+            Prediction_1  Prediction_2  Prediction_3  Prediction_4
+Date                                                              
+2025-01-31     1671.7052   1524.065918   1323.118164    503.248413
