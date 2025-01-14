@@ -149,3 +149,7 @@ Yearly predictions on 2025-01-13 01:47:18.129309:
             Prediction_1  Prediction_2  Prediction_3  Prediction_4
 Date                                                              
 2025-12-31   1258.729492   1176.646729   1048.289062     378.17514
+Yearly predictions on 2025-01-14 01:37:58.657349:
+            Prediction_1  Prediction_2  Prediction_3  Prediction_4
+Date                                                              
+2025-12-31   1509.060669   1387.239868   1214.880737    453.990112
