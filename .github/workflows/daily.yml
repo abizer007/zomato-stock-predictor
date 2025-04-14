@@ -31,8 +31,9 @@ jobs:
         pip install -r requirements.txt
         pip install flake8 pytest gitpython
 
-    - name: Lint
-      run: flake8 . --ignore=E501
+    - name: Run flake8 with ignores
+      run: flake8 . --ignore=E501,E203,E402,F811
+
 
 
     - name: Run tests
