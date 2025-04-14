@@ -26,7 +26,7 @@ jobs:
       with:
         python-version: "3.10"
 
-    - name: Install dependencies
+    - name: Install dependencies and tools
       run: |
         pip install -r requirements.txt
         pip install flake8 pytest gitpython
@@ -47,7 +47,7 @@ jobs:
       run: ls -l logs/predictions_plot.png
 
     - name: Upload prediction plot
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3.1.3
       with:
         name: predictions_plot
         path: logs/predictions_plot.png
@@ -61,8 +61,9 @@ jobs:
         git add performance.txt weekly_predictions.txt monthly_predictions.txt yearly_predictions.txt stock_data.csv
 
         if git diff --cached --quiet; then
-          echo "No changes to commit."
+          echo "✅ No changes to commit."
         else
-          git commit -m "Daily automation: $(date +'%Y-%m-%d')"
+          git commit -m "📈 Daily automation: $(date +'%Y-%m-%d')"
           git push
         fi
+
