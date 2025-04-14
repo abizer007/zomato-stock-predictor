@@ -47,7 +47,7 @@ jobs:
       run: ls -l logs/predictions_plot.png
 
     - name: Upload prediction plot
-      uses: actions/upload-artifact@v3.1.3
+      uses: actions/upload-artifact@v3
       with:
         name: predictions_plot
         path: logs/predictions_plot.png
