@@ -1,20 +1,39 @@
-name: Format Python Code
+name: Auto Format Python Code
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   format:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: '3.10'
+
       - name: Install tools
         run: |
-          pip install black isort
-      - name: Format code
+          pip install black isort autoflake
+
+      - name: Auto-format with black, isort, autoflake
         run: |
           black .
           isort .
+          autoflake --in-place --remove-unused-variables --remove-all-unused-imports -r .
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "🔧 Auto-format code with black, isort, autoflake" || echo "No changes to commit"
+          git push
