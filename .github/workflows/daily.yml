@@ -15,8 +15,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
-
+    runs-on: ubuntu-22.04  # ✅ Stable runner
 
     steps:
     - name: Checkout repository
@@ -48,7 +47,7 @@ jobs:
       run: ls -l logs/predictions_plot.png
 
     - name: Upload prediction plot
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3@b070cabe97d47cbd8d9d62e6ddbd0e75a8fce72d
       with:
         name: predictions_plot
         path: logs/predictions_plot.png
@@ -67,4 +66,3 @@ jobs:
           git commit -m "📈 Daily automation: $(date +'%Y-%m-%d')"
           git push
         fi
-
