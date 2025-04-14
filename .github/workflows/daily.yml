@@ -7,10 +7,10 @@ on:
     branches: ["main"]
   schedule:
     - cron: "0 0 * * *"  # Runs daily at midnight UTC
-  workflow_dispatch:  # Allows manual triggering
+  workflow_dispatch:
 
 permissions:
-  contents: write  # Write access for commits
+  contents: write
   issues: write
 
 jobs:
@@ -18,57 +18,51 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
     - name: Set up Python 3.10
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: "3.10"
 
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-        
-    - name: Install flake8
-      run: |
-        pip install flake8
-        
-    - name: Test with pytest
-      run: |
-        pytest
-        
-    - name: Install gitpython
-      run: |
-        pip install gitpython
-        
-    - name: Run model functions for daily tasks
-      run: |
-        python daily.py
-        
-    - name: Check files and git status
-      run: |
-        ls -l
-        git status
-    - name: Run graphical.py to generate plot
-      run: |
-          python graphical.py
-    - name: Check if plot file exists
-      run: |
-        ls -l logs/predictions_plot.png
+        pip install flake8 pytest gitpython
 
-    - name: Upload generated plot
+    - name: Lint with flake8
+      run: flake8 .
+
+    - name: Run tests
+      run: pytest
+
+    - name: Run daily prediction script
+      run: python daily.py
+
+    - name: Generate prediction plot
+      run: python graphical.py
+
+    - name: Check if plot file exists
+      run: ls -l logs/predictions_plot.png
+
+    - name: Upload prediction plot
       uses: actions/upload-artifact@v3
       with:
-          name: predictions_plot
-          path: logs/predictions_plot.png
-          if-no-files-found: warn
-          include-hidden-files: false
-          
-    - name: Commit changes
+        name: predictions_plot
+        path: logs/predictions_plot.png
+        if-no-files-found: warn
+
+    - name: Configure git and commit changes
       run: |
         git config --global user.name "abizer007"
         git config --global user.email "abizermasavi@gmail.com"
         git remote set-url origin https://github-actions:${{ secrets.ZOM_TOK }}@github.com/abizer007/zomato-stock-predictor.git
         git add performance.txt weekly_predictions.txt monthly_predictions.txt yearly_predictions.txt stock_data.csv
-        git commit -m "Daily automation: $(date +'%Y-%m-%d')"
-        git push
+
+        if git diff --cached --quiet; then
+          echo "No changes to commit."
+        else
+          git commit -m "Daily automation: $(date +'%Y-%m-%d')"
+          git push
+        fi
