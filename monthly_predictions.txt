@@ -184,3 +184,7 @@ Monthly predictions on 2025-04-16 00:57:53.901389:
             Prediction_1  Prediction_2  Prediction_3  Prediction_4
 Date                                                              
 2025-04-30   1425.404785    1316.86377   1159.208984    428.654205
+Monthly predictions on 2025-04-17 00:56:58.905492:
+            Prediction_1  Prediction_2  Prediction_3  Prediction_4
+Date                                                              
+2025-04-30    1306.91272   1217.181274   1080.354248    392.767853
